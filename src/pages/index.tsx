@@ -4,9 +4,9 @@ export default function Home() {
   return (
     <Layout
       title="Home Page"
-      subtitle="Building..."
+      subtitle="Page subtitle"
     >
-      <h3>Content!</h3>
+      <h3>Page Content</h3>
     </Layout>
   )
 }
