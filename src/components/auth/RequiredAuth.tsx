@@ -33,7 +33,7 @@ export default function RequiredAuth(props) {
             <div className={`
                 flex justify-center items-center h-screen
             `}>
-                <Image src={loadingImg} />
+                <Image src={loadingImg} alt="Loading Image" />
             </div>
         )
     }
