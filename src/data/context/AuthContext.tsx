@@ -7,6 +7,7 @@ import User from "../../model/User";
 interface AuthContextProps {
     user?: User
     loginWithGoogle?: () => Promise<void> // Async function return a Promise
+    logout?: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextProps>({})
@@ -60,24 +61,50 @@ export function AuthProvider(props) {
     }
 
     async function loginWithGoogle() {
-        // Open pop up window for user authentication with google
-        const resp = await firebase.auth().signInWithPopup(
-            new firebase.auth.GoogleAuthProvider()
-        )
+        try {
+            setLoading(true)
+            // Open pop up window for user authentication with google
+            const resp = await firebase.auth().signInWithPopup(
+                new firebase.auth.GoogleAuthProvider()
+            )
 
-        await configureSession(resp.user)
-        route.push('/')
+            // Configure user session and then navigate to admin template home page
+            await configureSession(resp.user)
+            route.push('/')
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    async function logout() {
+        try {
+            setLoading(true)
+            await firebase.auth().signOut()
+            await configureSession(null)
+
+        } finally {
+            // After executing the 'try', the 'finally' will always be executed, setting the loadding value to false, regardless of any error in the 'try'
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
-        const cancelar = firebase.auth().onIdTokenChanged(configureSession)
-        return () => cancelar()
+        // Check if the logged user cookie is set to get data from that user
+        if (Cookies.get('admin-template-cod3r-auth')) {
+            const cancelar = firebase.auth().onIdTokenChanged(configureSession)
+            return () => cancelar()
+
+        } else {
+            setLoading(false)
+        }
     }, [])
 
     return (
         <AuthContext.Provider value={{
             user,
-            loginWithGoogle
+            loginWithGoogle,
+            logout
         }}>
             {props.children}
         </AuthContext.Provider>
