@@ -6,7 +6,7 @@ import useAuth from "../data/hook/useAuth";
 export default function Auth() {
 
     // Use Auth Context
-    const { user, loginGoogle } = useAuth()
+    const { user, loginWithGoogle } = useAuth()
 
     const [error, setError] = useState(null)
     const [authMode, setAuthMode] = useState<'login' | "registration">('login')
@@ -80,7 +80,7 @@ export default function Auth() {
 
                     <hr className="my-6 border-gray-300 w-full" />
 
-                    <button onClick={loginGoogle} className={`
+                    <button onClick={loginWithGoogle} className={`
                         w-full bg-red-500 hover:bg-red-400
                         text-white rounded-lg px-4 py-3
                     `}>
