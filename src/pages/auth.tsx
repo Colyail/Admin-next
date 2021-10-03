@@ -6,7 +6,7 @@ import useAuth from "../data/hook/useAuth";
 export default function Auth() {
 
     // Use Auth Context
-    const { user, loginWithGoogle } = useAuth()
+    const { register, login, loginWithGoogle } = useAuth()
 
     const [error, setError] = useState(null)
     const [authMode, setAuthMode] = useState<'login' | "registration">('login')
@@ -19,11 +19,15 @@ export default function Auth() {
         setTimeout(() => setError(null), timeInSeconds * 1000)
     }
 
-    function submit() {
-        if (authMode === 'login') {
-            console.log('login')
-        } else {
-            console.log('registration')
+    async function submit() {
+        try {
+            if (authMode === 'login') {
+                await login(email, senha)
+            } else {
+                await register(email, senha)
+            }
+        } catch (e) {
+            showError(e?.message ?? "An unexpected error has occurred")
         }
     }
 

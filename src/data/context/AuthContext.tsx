@@ -7,6 +7,8 @@ import User from "../../model/User";
 interface AuthContextProps {
     user?: User
     loading?: boolean
+    register?: (email: string, password: string) => Promise<void>
+    login?: (email: string, password: string) => Promise<void>
     loginWithGoogle?: () => Promise<void> // Async function return a Promise
     logout?: () => Promise<void>
 }
@@ -41,7 +43,9 @@ function manageCookie(userIsLoggedIn: boolean) {
 
 export function AuthProvider(props) {
 
+    // State will be used to show an image while the screen is loading
     const [loading, setLoading] = useState(true)
+    // State will be used to save logged in user
     const [user, setUser] = useState<User>(null)
 
     // Configure user session after login, saving user in state
@@ -58,6 +62,32 @@ export function AuthProvider(props) {
             manageCookie(false)
             setLoading(false)
             return false
+        }
+    }
+
+    async function register(email, password) {
+        try {
+            setLoading(true)
+            const resp = await firebase.auth()
+                .createUserWithEmailAndPassword(email, password)
+
+            await configureSession(resp.user)
+            route.push('/')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    async function login(email, password) {
+        try {
+            setLoading(true)
+            const resp = await firebase.auth()
+                .signInWithEmailAndPassword(email, password)
+
+            await configureSession(resp.user)
+            route.push('/')
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -106,6 +136,8 @@ export function AuthProvider(props) {
         <AuthContext.Provider value={{
             user,
             loading,
+            login,
+            register,
             loginWithGoogle,
             logout
         }}>
