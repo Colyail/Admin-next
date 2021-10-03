@@ -6,6 +6,7 @@ import User from "../../model/User";
 
 interface AuthContextProps {
     user?: User
+    loading?: boolean
     loginWithGoogle?: () => Promise<void> // Async function return a Promise
     logout?: () => Promise<void>
 }
@@ -91,11 +92,12 @@ export function AuthProvider(props) {
 
     useEffect(() => {
         // Check if the logged user cookie is set to get data from that user
-        if (Cookies.get('admin-template-cod3r-auth')) {
+        if (Cookies.get('admin-template-auth')) {
             const cancelar = firebase.auth().onIdTokenChanged(configureSession)
             return () => cancelar()
 
         } else {
+            // If there is no user logged in, set the loading state to false, this information will be used in the RequiredAuth component to redirect the user to the auth page
             setLoading(false)
         }
     }, [])
@@ -103,6 +105,7 @@ export function AuthProvider(props) {
     return (
         <AuthContext.Provider value={{
             user,
+            loading,
             loginWithGoogle,
             logout
         }}>
