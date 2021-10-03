@@ -1,6 +1,7 @@
 import useAppData from "../../data/hook/useAppData";
 import ButtonToggleTheme from "./ButtonToggleTheme";
 import Title from "./Title";
+import UserAvatar from "./UserAvatar";
 
 interface HeaderProps {
     title: string
@@ -22,6 +23,7 @@ export default function Header(props: HeaderProps) {
                     theme={theme}
                     toggleTheme={toggleTheme}
                 />
+                <UserAvatar className="ml-3" />
             </div>
         </div>
     )
